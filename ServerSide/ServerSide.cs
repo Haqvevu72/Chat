@@ -41,9 +41,10 @@ while (true)
         while (true)
         {
             var Info = binaryReader.ReadString();
-            string[] array = Info.Split(' ',2);
-            var ToWho = array[0];
-            var ClientMessage = array[1];
+            string[] array = Info.Split(' ',3);
+            var FromWho = array[0];
+            var ToWho = array[1];
+            var ClientMessage = array[2];
 
             Console.WriteLine(ToWho);
             Console.WriteLine(ClientMessage);
@@ -60,7 +61,7 @@ while (true)
                     var receiver_Stream = receiver.GetStream();
 
                     var receiverWriter = new BinaryWriter(receiver_Stream);
-                    receiverWriter.Write(ClientMessage);
+                    receiverWriter.Write(FromWho+" "+ClientMessage);
                     IsFound= true;
                     break;
                 }

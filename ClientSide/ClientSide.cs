@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using System.Xml.Linq;
 #pragma warning disable
-AutoResetEvent autoResetEvent1 = new AutoResetEvent(false);
-AutoResetEvent autoResetEvent2 = new AutoResetEvent(false);
+
 var ip = IPAddress.Parse("127.0.0.1");
 var port = 27001;
 
@@ -17,13 +17,14 @@ var stream = client.GetStream();
 var binaryReader = new BinaryReader(stream);
 var binaryWriter = new BinaryWriter(stream);
 
-var Mes = String.Empty;
-
+var name_2 = "";
 Task.Run(async () =>
 {
     
     Console.Write("Your Name: ");
     var name = Console.ReadLine();
+    name_2 = name;
+    var FromWho = name;
     binaryWriter.Write(name);
 
     while (true)
@@ -39,29 +40,30 @@ Task.Run(async () =>
         Console.ForegroundColor = ConsoleColor.White;
 
         var Message = Console.ReadLine();
-        binaryWriter.Write(ToWho + " " + Message);
-
-        Mes = binaryReader.ReadString();
-        if (Mes != String.Empty)
-        {
-            autoResetEvent1.Set();
-            autoResetEvent2.WaitOne();
-        }
+        binaryWriter.Write(FromWho + " " + ToWho + " " + Message);
     }
     
 });
 
 while (true)
 {
-    autoResetEvent1.WaitOne();
+    var Mes = binaryReader.ReadString();
+    if (String.IsNullOrEmpty(Mes) == false)
+    {
+        string[] array = Mes.Split(' ', 2);
+        var FromWho = array[0];
+        var Message = array[1];
+        
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.Write($"\n{FromWho}: ");
+        Console.ForegroundColor = ConsoleColor.White;
 
-    Console.ForegroundColor = ConsoleColor.Green;
-    Console.Write("\nServer: ");
-    Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine(Message);
 
-    Console.WriteLine(Mes);
-    autoResetEvent2.Set();
-
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.Write($"To Who , {name_2}: ");
+        Console.ForegroundColor = ConsoleColor.White;
+    }
 
 }
 
